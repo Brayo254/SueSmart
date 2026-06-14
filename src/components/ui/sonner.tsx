@@ -44,9 +44,6 @@ const Toaster = ({ ...props }: ToasterProps) => {
         classNames: {
           toast: "cn-toast",
         },
-        success: {
-          duration: 5000,
-        },
       }}
       {...props}
     />
