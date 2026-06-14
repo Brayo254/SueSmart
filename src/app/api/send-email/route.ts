@@ -1,47 +1,38 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
+// Don't initialize at top level - do it inside the handler
 export async function POST(request: Request) {
+  // Check if API key exists
+  if (!process.env.RESEND_API_KEY) {
+    console.error("RESEND_API_KEY is not set");
+    return NextResponse.json(
+      { error: "Server configuration error" },
+      { status: 500 },
+    );
+  }
+
+  const resend = new Resend(process.env.RESEND_API_KEY);
+
   try {
     const body = await request.json();
     const { firstName, lastName, email, phone, subject, message } = body;
 
-    console.log("Received form submission:", body);
-
-    // Validate required fields
-    if (!firstName || !lastName || !email || !phone || !subject || !message) {
-      return NextResponse.json(
-        { error: "All fields are required" },
-        { status: 400 }
-      );
-    }
-
-    // Send email using Resend
-    const data = await resend.emails.send({
+    // ... rest of your logic
+    const { data, error } = await resend.emails.send({
       from: "SueSmart Contact <onboarding@resend.dev>",
       to: "sunbeamkenya001@gmail.com",
       subject: `New Contact Form Submission: ${subject}`,
-      html: `
-        <h2>New Contact Form Submission</h2>
-        <p><strong>Name:</strong> ${firstName} ${lastName}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Phone:</strong> ${phone}</p>
-        <p><strong>Subject:</strong> ${subject}</p>
-        <p><strong>Message:</strong></p>
-        <p>${message}</p>
-      `,
+      html: `...`,
       replyTo: email,
     });
 
-    console.log("Resend response:", data);
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
     return NextResponse.json({ success: true, data });
   } catch (error) {
-    console.error("Resend error:", error);
-    return NextResponse.json(
-      { error: "Failed to send email", details: error instanceof Error ? error.message : String(error) },
-      { status: 500 }
-    );
+    // ... error handling
   }
 }
