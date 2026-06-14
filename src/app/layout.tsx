@@ -5,6 +5,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Toaster } from "@/components/ui/sonner";
 
+
 const playfair = Playfair_Display({
   variable: "--font-playfair",
   subsets: ["latin"],
