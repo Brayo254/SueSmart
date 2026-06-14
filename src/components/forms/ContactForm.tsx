@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { contactFormSchema, ContactFormData } from "@/lib/validations";
@@ -38,6 +38,16 @@ export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
+  // Auto-dismiss success message after 5 seconds
+  useEffect(() => {
+    if (isSuccess) {
+      const timer = setTimeout(() => {
+        setIsSuccess(false);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [isSuccess]);
+
   const form = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
     defaultValues: {
@@ -54,19 +64,35 @@ export function ContactForm() {
     setIsSubmitting(true);
     setIsSuccess(false);
 
-    try {
-      // Simulate API call - in production, use Resend here
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+    console.log("Submitting form data:", data);
 
-      console.log("Form data:", data);
+    try {
+      const response = await fetch("/api/send-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+      console.log("API response:", result);
+
+      if (!response.ok) {
+        throw new Error(result.error || result.details || "Failed to send message");
+      }
+
       setIsSuccess(true);
       toast.success("Message sent successfully!", {
         description: "We'll get back to you within 24 hours.",
+        duration: 5000,
       });
       form.reset();
     } catch (error) {
+      console.error("Form submission error:", error);
       toast.error("Failed to send message", {
-        description: "Please try again or contact us directly.",
+        description: error instanceof Error ? error.message : "Please try again or contact us directly.",
+        duration: 5000,
       });
     } finally {
       setIsSubmitting(false);
@@ -196,7 +222,7 @@ export function ContactForm() {
                 </FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  value={field.value || ""}
                 >
                   <FormControl>
                     <SelectTrigger className="border-gray-300 focus:border-accent-red focus:ring-accent-red">

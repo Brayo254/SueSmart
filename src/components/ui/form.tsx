@@ -146,7 +146,19 @@ const FormMessage = React.forwardRef<
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, children, ...props }, ref) => {
   const { error, formMessageId } = useFormField()
-  const body = error ? String(error) : children
+
+  // Extract error message properly - error from Zod via react-hook-form can be an object
+  let body = children
+  if (error) {
+    if (typeof error === "string") {
+      body = error
+    } else if (error.message) {
+      body = error.message
+    } else if (typeof error === "object") {
+      // Handle ZodError structure or other error objects
+      body = (error as { message?: string }).message || "Invalid input"
+    }
+  }
 
   if (!body) {
     return null

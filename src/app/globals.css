@@ -109,6 +109,12 @@
   .text-navy {
     color: #001427;
   }
+  .bg-navy {
+    background-color: #001427;
+  }
+  .bg-navy-dark {
+    background-color: #000d19;
+  }
   .bg-cream {
     background-color: #f4d58d;
   }

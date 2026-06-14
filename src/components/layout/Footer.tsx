@@ -165,6 +165,23 @@ export function Footer() {
           </div>
         </div>
       </div>
+
+      {/* Made with love */}
+      <div className="bg-navy-dark border-t border-white/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <p className="text-center text-gray-400 text-sm">
+            Made with ❤️ by{" "}
+            <a
+              href="https://wa.me/254719316562"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-400 hover:text-accent-red transition-colors underline underline-offset-2"
+            >
+              Brian: +254 719 316 562
+            </a>
+          </p>
+        </div>
+      </div>
     </footer>
   );
 }
