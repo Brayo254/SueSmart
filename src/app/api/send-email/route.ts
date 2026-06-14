@@ -32,7 +32,7 @@ export async function POST(request: Request) {
         <p><strong>Message:</strong></p>
         <p>${message}</p>
       `,
-      reply_to: email,
+      replyTo: email,
     });
 
     console.log("Resend response:", data);
